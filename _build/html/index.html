@@ -1,0 +1,322 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>名称空间和execfile函数 &mdash; execfile expression 1.0 documentation</title>
+    
+    <link rel="stylesheet" href="_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '',
+        VERSION:     '1.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/translations.js"></script>
+    <link rel="top" title="execfile expression 1.0 documentation" href="#" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>导航</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="总目录"
+             accesskey="I">索引</a></li>
+        <li><a href="#">execfile expression 1.0 documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="execfile">
+<h1>名称空间和execfile函数<a class="headerlink" href="#execfile" title="永久链接至标题">¶</a></h1>
+<div class="section" id="id1">
+<h2>名称空间<a class="headerlink" href="#id1" title="永久链接至标题">¶</a></h2>
+<ol class="arabic simple">
+<li>名称空间就是一个 字典。 key 是变量名， value 是变量的值。</li>
+<li>每个模块有名称空间，每个函数有名称空间。</li>
+</ol>
+</div>
+<div class="section" id="globals-locals">
+<h2>globals() 和 locals()<a class="headerlink" href="#globals-locals" title="永久链接至标题">¶</a></h2>
+<ol class="arabic simple">
+<li>globals() 返回当前的全局名称空间， locals() 返回当前的局部名称空间。</li>
+</ol>
+<div class="highlight-python"><div class="highlight"><pre><span class="c"># namespace.py</span>
+<span class="n">x</span><span class="o">=</span><span class="s">&#39;global var&#39;</span>
+<span class="k">print</span> <span class="s">&#39;x&#39;</span> <span class="ow">in</span> <span class="nb">locals</span><span class="p">()</span>
+<span class="k">print</span> <span class="s">&#39;x&#39;</span> <span class="ow">in</span> <span class="nb">globals</span><span class="p">()</span>
+<span class="k">def</span> <span class="nf">fun</span><span class="p">():</span>
+    <span class="n">y</span><span class="o">=</span><span class="s">&#39;local var&#39;</span>
+    <span class="k">print</span> <span class="s">&#39;y&#39;</span> <span class="ow">in</span> <span class="nb">globals</span><span class="p">()</span>
+    <span class="k">print</span> <span class="s">&#39;y&#39;</span> <span class="ow">in</span> <span class="nb">locals</span><span class="p">()</span>
+    <span class="k">print</span> <span class="s">&#39;x&#39;</span> <span class="ow">in</span> <span class="nb">globals</span><span class="p">()</span>
+    <span class="k">print</span> <span class="s">&#39;x&#39;</span> <span class="ow">in</span> <span class="nb">locals</span><span class="p">()</span>
+
+<span class="n">fun</span><span class="p">()</span>
+</pre></div>
+</div>
+<div class="highlight-python"><pre>results:
+    True
+    True
+    False
+    True
+    True
+    False</pre>
+</div>
+<ol class="arabic simple" start="2">
+<li>在module最顶层 locals() 与 globals() 是相同的， module的函数里， globals() 与module顶层的 globals() 相同，locals() 里是函数里新建的局部变量。</li>
+</ol>
+</div>
+<div class="section" id="id2">
+<h2>execfile() 函数<a class="headerlink" href="#id2" title="永久链接至标题">¶</a></h2>
+<ol class="arabic simple">
+<li>用法： execfile(filname, globals=globals(), locals=locals())<ul>
+<li>globals 和 locals 是可选的，如果不指定的话，就是用默认的执行环境的名称空间。</li>
+<li>如果只指定 globals 那么 locals 默认与提供的 globals 相同</li>
+</ul>
+</li>
+<li>例子</li>
+</ol>
+<div class="highlight-python"><div class="highlight"><pre><span class="c"># call.py</span>
+<span class="n">x_call</span> <span class="o">=</span> <span class="s">&#39;x&#39;</span>
+<span class="k">def</span> <span class="nf">call</span><span class="p">():</span>
+    <span class="n">y_call</span> <span class="o">=</span> <span class="s">&#39;y&#39;</span>
+    <span class="nb">execfile</span><span class="p">(</span><span class="s">&#39;exc.py&#39;</span><span class="p">)</span>
+
+<span class="n">call</span><span class="p">()</span>
+
+
+<span class="c"># exc.py</span>
+<span class="k">print</span> <span class="s">&#39;x_call&#39;</span> <span class="ow">in</span> <span class="nb">globals</span><span class="p">()</span>
+<span class="k">print</span> <span class="s">&#39;y_call&#39;</span> <span class="ow">in</span> <span class="nb">globals</span><span class="p">()</span>
+<span class="k">print</span> <span class="s">&#39;x_call&#39;</span> <span class="ow">in</span> <span class="nb">globals</span><span class="p">()</span>
+<span class="k">print</span> <span class="s">&#39;x_call&#39;</span> <span class="ow">in</span> <span class="nb">locals</span><span class="p">()</span>
+<span class="k">print</span> <span class="n">x_call</span>
+<span class="k">print</span> <span class="n">y_call</span>
+
+<span class="n">z_exc</span> <span class="o">=</span> <span class="s">&#39;z&#39;</span>
+<span class="k">print</span> <span class="n">z_exc</span> <span class="ow">in</span> <span class="nb">globals</span><span class="p">()</span>
+<span class="k">print</span> <span class="n">z_exc</span> <span class="ow">in</span> <span class="nb">locals</span><span class="p">()</span>
+<span class="k">def</span> <span class="nf">test</span><span class="p">():</span>
+    <span class="k">print</span> <span class="n">z_exc</span>
+
+<span class="n">test</span><span class="p">()</span>
+</pre></div>
+</div>
+<div class="highlight-python"><pre>results:
+    True
+    False
+    False
+    True
+    x
+    y
+    False
+    True
+    Traceback (most recent call last):
+      File "D:\workspace\test\call.py", line 6, in &lt;module&gt;
+        call()
+      File "D:\workspace\test\call.py", line 4, in call
+        execfile('exc.py')
+      File "exc.py", line 12, in &lt;module&gt;
+        test()
+      File "exc.py", line 10, in test
+        print z_exc
+    NameError: global name 'z_exc' is not defined</pre>
+</div>
+<ol class="arabic simple" start="2">
+<li>稍作修改。</li>
+</ol>
+<div class="highlight-python"><div class="highlight"><pre><span class="c"># call.py</span>
+<span class="n">x_call</span> <span class="o">=</span> <span class="s">&#39;x&#39;</span>
+<span class="k">def</span> <span class="nf">call</span><span class="p">():</span>
+    <span class="n">y_call</span> <span class="o">=</span> <span class="s">&#39;y&#39;</span>
+    <span class="nb">execfile</span><span class="p">(</span><span class="s">&#39;exc.py&#39;</span><span class="p">)</span>
+
+<span class="n">call</span><span class="p">()</span>
+<span class="k">print</span> <span class="n">z_exc</span>
+
+
+<span class="c"># exc.py</span>
+<span class="k">print</span> <span class="s">&#39;x_call&#39;</span> <span class="ow">in</span> <span class="nb">globals</span><span class="p">()</span>
+<span class="k">print</span> <span class="s">&#39;y_call&#39;</span> <span class="ow">in</span> <span class="nb">globals</span><span class="p">()</span>
+<span class="k">print</span> <span class="s">&#39;x_call&#39;</span> <span class="ow">in</span> <span class="nb">globals</span><span class="p">()</span>
+<span class="k">print</span> <span class="s">&#39;x_call&#39;</span> <span class="ow">in</span> <span class="nb">locals</span><span class="p">()</span>
+<span class="k">print</span> <span class="n">x_call</span>
+<span class="k">print</span> <span class="n">y_call</span>
+
+<span class="c">######### here ##########</span>
+<span class="k">global</span> <span class="n">z_exc</span>
+<span class="c">#########################</span>
+<span class="n">z_exc</span> <span class="o">=</span> <span class="s">&#39;z&#39;</span>
+<span class="k">print</span> <span class="n">z_exc</span> <span class="ow">in</span> <span class="nb">globals</span><span class="p">()</span>
+<span class="k">print</span> <span class="n">z_exc</span> <span class="ow">in</span> <span class="nb">locals</span><span class="p">()</span>
+<span class="k">def</span> <span class="nf">test</span><span class="p">():</span>
+    <span class="k">print</span> <span class="n">z_exc</span>
+
+<span class="n">test</span><span class="p">()</span>
+</pre></div>
+</div>
+<div class="highlight-python"><pre>results:
+    True
+    False
+    False
+    True
+    x
+    y
+    True
+    False
+    z
+    z</pre>
+</div>
+<ol class="arabic simple" start="3">
+<li>在 execfile 执行的module里新建的顶层变量 默认插入 locals() 里，不会添加到 globals() 里, execfile 执行的代码像是 另定义了一个函数</li>
+<li>如果不使用 调用函数 的名称空间的变量 那么 传入 {} 可以解决问题。</li>
+</ol>
+<div class="highlight-python"><div class="highlight"><pre><span class="c"># call.py</span>
+<span class="n">x_call</span> <span class="o">=</span> <span class="s">&#39;x&#39;</span>
+<span class="k">def</span> <span class="nf">call</span><span class="p">():</span>
+    <span class="n">y_call</span> <span class="o">=</span> <span class="s">&#39;y&#39;</span>
+    <span class="nb">execfile</span><span class="p">(</span><span class="s">&#39;exc.py&#39;</span><span class="p">,{})</span>
+
+<span class="n">call</span><span class="p">()</span>
+<span class="c">#print z_exc</span>
+
+
+<span class="c"># exc.py</span>
+<span class="k">print</span> <span class="s">&#39;x_call&#39;</span> <span class="ow">in</span> <span class="nb">globals</span><span class="p">()</span>
+<span class="k">print</span> <span class="s">&#39;y_call&#39;</span> <span class="ow">in</span> <span class="nb">globals</span><span class="p">()</span>
+<span class="k">print</span> <span class="s">&#39;x_call&#39;</span> <span class="ow">in</span> <span class="nb">globals</span><span class="p">()</span>
+<span class="k">print</span> <span class="s">&#39;x_call&#39;</span> <span class="ow">in</span> <span class="nb">locals</span><span class="p">()</span>
+<span class="c">#print x_call</span>
+<span class="c">#print y_call</span>
+
+<span class="n">z_exc</span> <span class="o">=</span> <span class="s">&#39;z&#39;</span>
+<span class="k">print</span> <span class="n">z_exc</span> <span class="ow">in</span> <span class="nb">globals</span><span class="p">()</span>
+<span class="k">print</span> <span class="n">z_exc</span> <span class="ow">in</span> <span class="nb">locals</span><span class="p">()</span>
+<span class="k">def</span> <span class="nf">test</span><span class="p">():</span>
+    <span class="k">print</span> <span class="n">z_exc</span>
+<span class="n">test</span><span class="p">()</span>
+</pre></div>
+</div>
+<div class="highlight-python"><pre>results:
+    False
+    False
+    False
+    False
+    True
+    True
+    z</pre>
+</div>
+<ol class="arabic simple" start="5">
+<li>globals() 可以改变， locals() 不可以。</li>
+</ol>
+<div class="highlight-python"><div class="highlight"><pre><span class="c"># call.py</span>
+<span class="n">x_call</span> <span class="o">=</span> <span class="s">&#39;x&#39;</span>
+<span class="k">def</span> <span class="nf">call</span><span class="p">():</span>
+    <span class="n">y_call</span> <span class="o">=</span> <span class="s">&#39;y&#39;</span>
+    <span class="nb">execfile</span><span class="p">(</span><span class="s">&#39;exc.py&#39;</span><span class="p">,{})</span>
+    <span class="k">print</span> <span class="n">x_call</span>
+    <span class="k">print</span> <span class="n">y_call</span>
+
+<span class="n">call</span><span class="p">()</span>
+
+<span class="c"># exc.py</span>
+<span class="c">#print &#39;x_call&#39; in globals()</span>
+<span class="c">#print &#39;y_call&#39; in globals()</span>
+<span class="c">#print &#39;x_call&#39; in globals()</span>
+<span class="c">#print &#39;x_call&#39; in locals()</span>
+
+<span class="nb">globals</span><span class="p">()[</span><span class="s">&#39;x_call&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s">&#39;x_changed&#39;</span>
+<span class="nb">locals</span><span class="p">()[</span><span class="s">&#39;y_call&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s">&#39;y_changed&#39;</span>
+
+<span class="c">#z_exc = &#39;z&#39;</span>
+<span class="c">#def test()：</span>
+<span class="c">#    print z_exc</span>
+
+<span class="c">#test()</span>
+</pre></div>
+</div>
+<div class="highlight-python"><pre>results:
+     x_changed
+     y</pre>
+</div>
+<div class="admonition- admonition seealso">
+<p class="first admonition-title">也可以参考</p>
+<ul class="last simple">
+<li><a class="reference external" href="http://hyry.dip.jp/tech/book/page/python/variable_scope_global.html">从编译角度理解全局变量与区部变量</a></li>
+<li><a class="reference external" href="http://woodpecker.org.cn/diveintopython/html_processing/locals_and_globals.html">局部名字空间与全局名字空间</a></li>
+</ul>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="#">內容目录</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">名称空间和execfile函数</a><ul>
+<li><a class="reference internal" href="#id1">名称空间</a></li>
+<li><a class="reference internal" href="#globals-locals">globals() 和 locals()</a></li>
+<li><a class="reference internal" href="#id2">execfile() 函数</a></li>
+</ul>
+</li>
+</ul>
+
+  <h3>本页</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/index.txt"
+           rel="nofollow">显示源代码</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>快速搜索</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="搜索" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    输入相关的模块，术语，类或者函数名称进行搜索
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>导航</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="总目录"
+             >索引</a></li>
+        <li><a href="#">execfile expression 1.0 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; 版权所有 2013, zhaiyt.
+      使用 <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+    </div>
+  </body>
+</html>
